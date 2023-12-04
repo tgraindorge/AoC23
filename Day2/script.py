@@ -33,7 +33,6 @@ for line in Lines:
     if gameMaxRED <= maxRED and gameMaxGREEN <= maxGREEN and gameMaxBLUE <= maxBLUE:
         totalPart1 += gameID
 
-    gamePower = 0
     if(gameMaxRED == 0):
         gameMaxRED = 1
     if(gameMaxGREEN == 0):
