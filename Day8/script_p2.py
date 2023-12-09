@@ -2,11 +2,9 @@ import re
 from itertools import cycle
 from math import lcm
 
-debug = False
-
 def main():
     file = open('input2.txt', 'r')
-    directions, _, *str_map = open('input.txt').read().splitlines()
+    directions, _, *str_map = file.read().splitlines()
     map = {mp[0:3]: {'L': mp[7:10], 'R': mp[12:15]} for mp in str_map}
 
     positions = [mp for mp in map if mp.endswith('A')]
