@@ -1,40 +1,17 @@
-import re
-import math
-
-debug = False
+from itertools import cycle
 
 def main():
     file = open('input.txt', 'r')
-    Lines = file.readlines()
-    Map = {}
-    Directions = []
-
-    lineNumber = 1
-    for line in Lines:
-        if lineNumber == 1:
-           for dir in line:
-               if dir == "L": Directions.append(0)
-               if dir == "R": Directions.append(1)
-
-               
-        if lineNumber > 2:
-            Map[re.search(r"^([A-Z]{3})",line).group(1)] = [re.search(r"\(([A-Z]{3})",line).group(1), re.search(r"([A-Z]{3})\)",line).group(1)]
-        lineNumber += 1
+    directions, _, *str_map = file.read().splitlines()
+    map = {mp[0:3]: {'L': mp[7:10], 'R': mp[12:15]} for mp in str_map}
 
     curPosition = "AAA"
-    dirCursor = 0
     total = 0
+    dir = cycle(directions)
     while curPosition != "ZZZ":
-        if debug: print(curPosition + " / dir: " + str(Directions[dirCursor]) )
-        curPosition = Map[curPosition][Directions[dirCursor]]
-        total +=1
-        if dirCursor < (len(Directions)-1):
-            dirCursor +=1
-        else:
-            dirCursor = 0
-    
+        total += 1
+        curPosition = map[curPosition][next(dir)]
 
     print("Total: " + str(total))
-    
 
 main()
