@@ -3,6 +3,7 @@ import re
 debug = True
 
 ValidBlock = re.compile(r"^([#?]+)$")
+NoBlock = re.compile(r"^([.?]+)$")
 
 def main():
     with open('input2.txt', 'r') as f:
@@ -17,18 +18,23 @@ def main():
     print(total)
 
 def getArrangements(pat : str, blocks : [int], count : int) -> int:
-    if debug: print(pat)
-    if debug: print(blocks)
+    
     minLength = 0
     for b in blocks:
         minLength += b + 1
     minLength -=1
     bMax = len(pat) - minLength
-    if bMax == 0:
+    if debug: print("------")
+    if debug: print("Pat: " + pat)
+    if debug: print(blocks)
+    if debug: print("bMax: " + str(bMax))
+    if debug: print("MinLen: " + str(minLength))
+    if bMax == 0 and re.match(ValidBlock, pat[0:blocks[0]]):
+        if debug: print(" COUNT ++ - bMax == 0")
         return count + 1
     isLastBlock = len(blocks) == 1
     i = 0
-    if debug: print("bMax: " + str(bMax))
+    if debug and isLastBlock: print("is last Block")
     while i<= bMax:
 
         '''
@@ -43,12 +49,20 @@ def getArrangements(pat : str, blocks : [int], count : int) -> int:
             y += 1
         if validPos:
         '''
-        if debug: print("i+blocks[0]): " + str(i+blocks[0]))
+        #if debug: print("i+blocks[0]): " + pat[i+blocks[0]])
         if debug: print("len(pat): " + str(len(pat)))
-        if re.match(ValidBlock, pat[i:i+blocks[0]]) and ((i+blocks[0]) == len(pat) or pat[i+blocks[0]] in ["?","."] ):
+        if (re.match(ValidBlock, pat[i:i+blocks[0]]) and # Block placecment OK
+                ((i+blocks[0]) == len(pat) or pat[i+blocks[0]] in ["?","."] ) and # End of string OR next char ? or .
+                 (i == 0 or pat[i-1] in ["?","."]) # First in string OR prev char ? or .
+            ):
             if debug: print("validBlock " + pat[i:i+blocks[0]])
             if isLastBlock:
-                count += 1
+                if debug: print(pat[i+blocks[0]:])
+                if len(pat[i+blocks[0]:])==0 or re.match(NoBlock, pat[i+blocks[0]:]):
+                    count += 1
+                    if debug: print(" COUNT ++ - last block position VALID")
+                else:
+                    if debug: print("position INVALID - More block after")
             else:
                 if debug: print("i : " + str(i))
                 if debug: print("blocks[0] : " + str(blocks[1:][0]))
