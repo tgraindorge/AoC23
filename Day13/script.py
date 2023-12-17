@@ -2,17 +2,7 @@ def main():
     if __name__ == '__main__':
         with open('input.txt', 'r') as f:
             data = [l.splitlines() for l in [b for b in f.read().split("\n\n")]]
-            '''
-            str_lines = f.read().splitlines()
-            data = [[]]
-            b = 0
-            for l in str_lines:
-                if(l==""):
-                    data.append([])
-                    b += 1
-                else:
-                    data[b].append([*l])
-            '''
+
             total = 0
             for block in data:
                 total += getvline(block)
