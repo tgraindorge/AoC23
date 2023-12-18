@@ -1,4 +1,5 @@
-from functools import lru_cache
+import math
+
 def main():
     if __name__ == '__main__':
         with open('input.txt', 'r') as f:
@@ -6,16 +7,21 @@ def main():
             data = moveNorth(data)
             print("Part 1: " + str(getResult(data)))
             data = moveSouth(data)
-            for i in range(100):
+
+            scoreTrack = ScoreTracker()
+
+            while( not scoreTrack.patternFound):
                 data = moveNorth(data)
                 data = moveWest(data)
                 data = moveSouth(data)
                 data = moveEast(data)
+                scoreTrack.add(getResult(data))
+            
+            cycles = 1000000000
+            x = math.floor((cycles - scoreTrack.initSeqLen)/scoreTrack.patternSeqLen) * scoreTrack.patternSeqLen
+            x = cycles - x
 
-                print("Part 2: " + str(getResult(data)))
-            #for lst in data:
-            #    print(*lst)
-            #print("///////")
+            print("Part 2: " + str(scoreTrack.history[x-1]))
 
  
 def moveSouth(data : [[]]):
@@ -64,5 +70,39 @@ def getResult(data : []):
         weight -= 1
     return total
     
+class ScoreTracker:
+    def __init__(self) -> None:
+        self.history = []
+        self.initSeqLen = 0
+        self.patternSeqLen = 0
+        self.patternSeqOffset = 0
+        self.patternFound = False
+
+
+
+
+    def add(self, score: int):
+        self.history.append(score)
+        if self.initSeqLen != 0:
+            self.checkPattern(score)
+        else:
+            self.findCantidate(score)
+
+    def findCantidate(self, score):
+        if len(self.history) < 10: return
+        for i in range(len(self.history)-5):
+            if self.history[i] == score:
+                self.initSeqLen = i
+                self.patternSeqLen = len(self.history) - i - 1
+
+
+    def checkPattern(self, score):
+        self.patternSeqOffset += 1
+        if score != self.history[self.initSeqLen + self.patternSeqOffset]:
+            self.patternSeqOffset = 0
+            self.patternSeqLen = 0
+        elif score == self.history[self.initSeqLen]:
+            self.patternFound = True
+
 if __name__ == "__main__":
     main()
