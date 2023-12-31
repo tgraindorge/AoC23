@@ -1,8 +1,39 @@
+import time
 def main():
     with open('input.txt', 'r') as f:
-        board = Contraption([[*c] for c in f.read().splitlines()])
-        board.launch()
+        data = [[*c] for c in f.read().splitlines()]
+        start_p1 = time.perf_counter()
+        beam = Beam(-1, 0, "R")
+        board = Contraption(data)
+        board.launch(beam)
         print("Part 1: " + str(len(board.tilesValid)))
+        print("[" + str(round((time.perf_counter()-start_p1), 2)) + " s]")
+        
+        start_p2 = time.perf_counter()
+        maxTiles = 0
+        for yl in range(len(data)):
+            beam = Beam(-1, yl, "R")
+            b = Contraption(data)
+            b.launch(beam)
+            maxTiles = max(maxTiles, len(b.tilesValid))
+        for yr in range(len(data)):
+            beam = Beam(len(data), yr, "L")
+            b = Contraption(data)
+            b.launch(beam)
+            maxTiles = max(maxTiles, len(b.tilesValid))
+        for xt in range(len(data[0])):
+            beam = Beam(xt, -1, "D")
+            b = Contraption(data)
+            b.launch(beam)
+            maxTiles = max(maxTiles, len(b.tilesValid))
+        for xb in range(len(data[0])):
+            beam = Beam(xb, len(data[0]), "U")
+            b = Contraption(data)
+            b.launch(beam)
+            maxTiles = max(maxTiles, len(b.tilesValid))
+
+        print("Part 2: " + str(maxTiles))
+        print("[" + str(round((time.perf_counter()-start_p2), 2)) + " s]")
         
 
 
@@ -13,9 +44,6 @@ class Beam:
         self.dir = _dir
         self.active = True
 
-
-
-
 class Contraption:
     def __init__(self, _data) -> None:
         self.data = _data
@@ -24,11 +52,8 @@ class Contraption:
         self.beams = []
         self.activeBeams = 1
 
-        self.maxStep = int((len(_data) * len(_data[0])))
-
-
-    def launch(self):
-        self.beams.append(Beam(-1, 0, "R"))
+    def launch(self, b):
+        self.beams.append(b)
         while self.activeBeams > 0:
             for b in self.beams:
                 if(b.active):
@@ -36,8 +61,6 @@ class Contraption:
 
 
     def moveBeam(self, b : Beam):
-        
-
         match b.dir:
             case "R":
                 if b.x < len(self.data[b.y])-1:
