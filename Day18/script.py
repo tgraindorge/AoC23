@@ -1,4 +1,4 @@
-from shapely import *
+from shapely import Polygon
 
 def main():
     file = open('input.txt', 'r').read()
