@@ -2,17 +2,15 @@ from shapely import Polygon
 
 def main():
     file = open('input.txt', 'r').read()
-    instr = [[ln.split()[0], int(ln.split()[1]), ln.split()[2][2:8]] for ln in file.splitlines()]
+    instr = [[ln.split()[0], int(ln.split()[1])] for ln in file.splitlines()]
     instr_p2 = [[ln.split()[2][7], int(ln.split()[2][2:7],16)] for ln in file.splitlines()]
 
     print("Total part 1: " + str(computeArea(instr)))
     print("Total part 2: " + str(computeArea(instr_p2)))
 
 def computeArea(instr):
-    cur_x = 0
-    cur_y = 0
+    cur_x, cur_y, len = 0, 0, 0
     pointsMap = []
-    len = 0
     for l in instr:
         len += l[1]
         match l[0]:
